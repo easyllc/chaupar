@@ -40,6 +40,9 @@ func main() {
 	defer db.Close()
 	
 	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/templates/", func (c http.ResponseWriter, r *http.Request) {
+		http.ServeFile(c, r, r.URL.Path[1:])
+	})
 
 	err = http.ListenAndServe(ADDR, nil)
 	checkErr(err)
