@@ -3,6 +3,22 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Chaupar game</title>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script >
+        $(function() {
+            var ws = new WebSocket("ws://localhost:8081/s");
+            ws.onmessage = function(e) {
+              console.log("受信メッセージ:" + event.data);
+            };
+            var $ul = $('#msg-list');
+            $('#sendBtn').click(function(){
+              var data = $('#name').val();
+              ws.send(data);
+              console.log("送信メッセージ:" + data);
+              $('<li>').text(data).appendTo($ul);
+            });
+        });
+    </script>
 </head>
 <body>
     <h1>Chaupar game</h1>

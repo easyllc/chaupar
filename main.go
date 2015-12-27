@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"time"
 	"fmt"
+	"golang.org/x/net/websocket"
+	"io"
 )
 
 /* Database settings  */
@@ -24,12 +26,13 @@ var db *sql.DB
 
 /* Player structure  */
 type Player struct {
+	ID int
 	Name string
 }
 
 /* Game structure  */
 type Game struct {
-	Id int
+	ID int
 	Players [4]Player
 }
 
@@ -40,12 +43,17 @@ func main() {
 	defer db.Close()
 	
 	http.HandleFunc("/", homeHandler)
+	http.Handle("/s", websocket.Handler(testSocket))
 	http.HandleFunc("/templates/", func (c http.ResponseWriter, r *http.Request) {
 		http.ServeFile(c, r, r.URL.Path[1:])
 	})
 
 	err = http.ListenAndServe(ADDR, nil)
 	checkErr(err)
+}
+
+func testSocket(ws *websocket.Conn) {
+	io.Copy(ws, ws)
 }
 
 /**
@@ -75,7 +83,6 @@ func homeHandler(c http.ResponseWriter, r *http.Request) {
 			}
 		}
 	} else {
-		
 		templateFile = template.Must(template.ParseFiles("templates/main.html", "templates/game.html"))
 	}
 
