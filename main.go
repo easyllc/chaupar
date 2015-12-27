@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"golang.org/x/net/websocket"
 	"io"
+	"./models"
 )
 
 /* Database settings  */
@@ -47,6 +48,10 @@ func main() {
 	http.HandleFunc("/templates/", func (c http.ResponseWriter, r *http.Request) {
 		http.ServeFile(c, r, r.URL.Path[1:])
 	})
+	// websocket server
+	server := models.NewServer("/entry")
+	go server.Listen()
+
 
 	err = http.ListenAndServe(ADDR, nil)
 	checkErr(err)
